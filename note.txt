@@ -1,0 +1,25 @@
+
+To Update the project Structure
+
+mkdir src/app/services
+mkdir src/app/pages
+mv src/app/auth.service.ts src/app/services/auth.service.ts
+mv src/app/login src/app/pages/login
+mv src/app/register src/app/pages/register
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+CREATE TABLE Users (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    username NVARCHAR(50) NOT NULL UNIQUE,
+    password NVARCHAR(255) NOT NULL
+);
+GO
+
+-- Insert Initial Data (replace hashed passwords with actual hashed values)
+INSERT INTO Users (username, password)
+VALUES 
+('testuser', '$2a$08$uyRt3euwQ0P4nEqdCgkO5e3OXZZ0l6dKZqcyw7OjOsoYtI5PqE/AW'),  -- hashed 'password123'
+('admin', '$2a$08$zNm5dKtXhUeCZoeoT6obGejvKu3t9sQu2bF0G5QsbyuENCM0YYUly');  -- hashed 'admin123'
+GO
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
