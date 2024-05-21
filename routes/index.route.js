@@ -5,7 +5,7 @@ const masterRequestsController = require('../controllers/masterRequestsControlle
 const docRequestsController = require('../controllers/docRequestsController');
 const memberController = require('../controllers/memberController');
 const authController = require('../controllers/auth.controller');
-// const userslogController = require('../controllers/userslogController');
+const toolController = require('../controllers/toolController');
 
 //Request
 router.post('/insert_req', masterRequestsController.create_MasterRequest);
@@ -33,9 +33,10 @@ router.delete('/delete_Member',memberController.delete_Employee);
 router.post('/login', authController.login);
 router.post('/register', authController.register);
 
-// router.post('/register', userslogController.register);
-// router.post('/login', userslogController.login);
 
+//get tool
+router.get('/get_tool',toolController.get_tool);
+router.get('/getMasterToolingData',toolController.getMasterToolingData);
 
 module.exports = router;
 

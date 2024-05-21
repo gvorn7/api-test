@@ -1,43 +1,41 @@
 const { connectDb, closeDb } = require("../config/db.config");
 var Type = require("mssql").TYPES;
+
+
 const create_MasterRequest = async (req, res) => {
   try {
-    const partNo = req.body.partNo;
-    const mcType = req.body.mcType;
-    const mcNo = req.body.mcNo;
-    const revPart = req.body.revPart;
-    const dateOfReq = req.body.dateOfReq;
+    console.log("Request Body:", req.body);
+    
+    const { division, partNo, selectedProcess, mcType, mcNo, revPart, selectedCase, dateOfReq } = req.body;
+
 
     const pool = await poolPromise;
 
-    const result = await pool.request();
 
-    result
-      .input("partNo", Type.NVarChar, partNo)
-      .input("mcType", Type.NVarChar, mcType)
-      .input("mcNo", Type.NVarChar, mcNo)
-      .input("revPart", Type.NVarChar, revPart)
-      .input("dateOfReq", Type.Date, dateOfReq);
+    const query = `
+      INSERT INTO YourTableName (Division, PartNo, Process, MCType, MCNo, RevPart, Case, DateOfReq)
+      VALUES (@division, @partNo, @selectedProcess, @mcType, @mcNo, @revPart, @selectedCase, @dateOfReq)
+    `;
 
-    result.query(
-      "INSERT INTO YourTableName (PartNo, MCNo, RevPart, DateOfReq) VALUES (@partNo, @mcNo, @revPart, @dateOfReq)",
-      function (err, result) {
-        if (err) {
-          console.log(err);
-          res.status(500).json({
-            success: false,
-            message: "Error inserting record",
-            error: err.message
-          });
-        } else {
-          res.status(200).json({
-            success: true,
-            message: "Record inserted successfully"
-          });
-        }
-      }
-    );
+    // Execute query
+    const result = await pool.request()
+      .input('division', sql.NVarChar, division)
+      .input('partNo', sql.NVarChar, partNo)
+      .input('selectedProcess', sql.NVarChar, selectedProcess)
+      .input('mcType', sql.NVarChar, mcType)
+      .input('mcNo', sql.NVarChar, mcNo)
+      .input('revPart', sql.NVarChar, revPart)
+      .input('selectedCase', sql.NVarChar, selectedCase)
+      .input('dateOfReq', sql.Date, dateOfReq)
+      .query(query);
+
+    // Send success response
+    res.status(200).json({
+      success: true,
+      message: "Record inserted successfully"
+    });
   } catch (err) {
+    // Handle errors
     console.error("Error executing query:", err.stack);
     res.status(500).json({
       success: false,

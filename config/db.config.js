@@ -5,7 +5,7 @@ const dbConfig = {
     user: "admin1",
   password: "adminadmin1",
   server: "PBGM7A",
-  database: "db_Gauge_Inventory",
+  database: "db_longdoo",
   options: {
     trustServerCertificate: true,
     trustedConnection: true,
