@@ -7,12 +7,12 @@ const errorMiddleware = require('./middleware/error');
 const app = express();
 const port = 3000;
 
-// Middlewares
-app.use(cors()); // Enable CORS
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
-// Define CORS headers (optional, as CORS middleware already handles this)
+app.use(cors()); 
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true }));
+
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
