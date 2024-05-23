@@ -1,7 +1,6 @@
 const { connectDb, closeDb, poolPromise } = require("../config/db.config");
 var Type = require("mssql").TYPES;
 
-
 const get_tool = async function (req, res) {
   try {
     console.log("Request Body:", req.body);
@@ -72,5 +71,5 @@ const getMasterToolingData = async (req, res) => {
 module.exports = {
   get_tool,
   get_toolByEmp_Code,
-  getMasterToolingData
+  getMasterToolingData,
 };

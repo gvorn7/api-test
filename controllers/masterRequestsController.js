@@ -1,38 +1,45 @@
-const { connectDb, closeDb } = require("../config/db.config");
+const { connectDb, closeDb, poolPromise } = require("../config/db.config");
 var Type = require("mssql").TYPES;
-
 
 const create_MasterRequest = async (req, res) => {
   try {
     console.log("Request Body:", req.body);
-    
-    const { division, partNo, selectedProcess, mcType, mcNo, revPart, selectedCase, dateOfReq } = req.body;
 
+    const {
+      division,
+      PartNo,
+      selectedProcess,
+      mcType,
+      mcNo,
+      revPart,
+      selectedCase,
+      dateOfReq,
+    } = req.body;
 
     const pool = await poolPromise;
 
-
     const query = `
       INSERT INTO YourTableName (Division, PartNo, Process, MCType, MCNo, RevPart, Case, DateOfReq)
-      VALUES (@division, @partNo, @selectedProcess, @mcType, @mcNo, @revPart, @selectedCase, @dateOfReq)
+      VALUES (@division, @PartNo, @selectedProcess, @mcType, @mcNo, @revPart, @selectedCase, @dateOfReq)
     `;
 
     // Execute query
-    const result = await pool.request()
-      .input('division', sql.NVarChar, division)
-      .input('partNo', sql.NVarChar, partNo)
-      .input('selectedProcess', sql.NVarChar, selectedProcess)
-      .input('mcType', sql.NVarChar, mcType)
-      .input('mcNo', sql.NVarChar, mcNo)
-      .input('revPart', sql.NVarChar, revPart)
-      .input('selectedCase', sql.NVarChar, selectedCase)
-      .input('dateOfReq', sql.Date, dateOfReq)
+    const result = await pool
+      .request()
+      .input("division", sql.NVarChar, division)
+      .input("PartNo", sql.NVarChar, PartNo)
+      .input("selectedProcess", sql.NVarChar, selectedProcess)
+      .input("mcType", sql.NVarChar, mcType)
+      .input("mcNo", sql.NVarChar, mcNo)
+      .input("revPart", sql.NVarChar, revPart)
+      .input("selectedCase", sql.NVarChar, selectedCase)
+      .input("dateOfReq", sql.Date, dateOfReq)
       .query(query);
 
     // Send success response
     res.status(200).json({
       success: true,
-      message: "Record inserted successfully"
+      message: "Record inserted successfully",
     });
   } catch (err) {
     // Handle errors
@@ -40,65 +47,112 @@ const create_MasterRequest = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
-      error: err.message
+      error: err.message,
     });
   }
 };
 
 
+const get_onlyPartNo = async function (req, res) {
+  try {
+    console.log("Request Body:", req.body);
+
+    const pool = await poolPromise;
+    console.log("Database pool created:", pool);
+
+    const result = await pool
+      .request()
+      .query("EXEC [trans].[tb_Master_Tooling_Query_PartxALL]");
+
+    // console.log("Query Result:", result);
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error executing query:", error.stack);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+};
 
 
+const getProcesses = async function (req, res) {
+  try {
+    console.log("Request Params:",  req.body);
+
+    const { PartNo } =  req.body;
+
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("PartNo", Type.NVarChar, PartNo)
+      .query("EXEC [trans].[tb_Master_Tooling_Query_Partx1] @PartNo");
+
+    if (result.recordset.length === 0) {
+      res.status(404).json({ error: "Part Number not found" });
+    } else {
+      res.json(result.recordsets);
+    }
+  } catch (error) {
+    console.error("Error executing query:", error.stack);
+    res.status(500).json({ error: " Server Error", details: error.message });
+  }
+};
 
 
-// const create_MasterRequest = async (req, res) => {
-//   try {
-//     const Emp_Code = req.body.Emp_Code;
-//     const pool = await poolPromise;
+const getMachines = async function (req, res) {
+  try {
+    console.log("Request Params:",  req.body);
+
+    const { PartNo, Process } =  req.body;
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("PartNo", Type.NVarChar, PartNo)
+      .input("Process", Type.NVarChar, Process)
+      .query("EXEC [trans].[tb_Master_Tooling_Query_Partx2] @PartNo, @Process");
+
+    if (result.recordset.length === 0) {
+      res.status(404).json({ error: "MC not found" });
+    } else {
+      res.json(result.recordsets);
+    }
+  } catch (error) {
+    console.error("Error executing query:", error.stack);
+    res.status(500).json({ error: " Server Error", details: error.message });
+  }
+};
 
 
-//     const result = await pool.request();
+const getDetails = async function (req, res) {
+  try {
+    console.log("Request Params:",  req.body);
 
-//     result
-//       .input("a", Type.NVarChar, Emp_Code)
-//       .input("b", Type.NVarChar, req.body.Emp_Name)
-//       .input("c", Type.NVarChar, req.body.Emp_Surname)
-//       .input("d", Type.NVarChar, req.body.empImg)
-//       .input("e", Type.Int, req.body.Level_ID);
-//     result.query(
-//       "EXEC [trans].[tb_Employee_create] @a, @b,@c,@d,@e",
-//       function (err, result) {
-//         if (err) {
-//           console.log(err);
-//         } else {
-//           res.json({
-//             success: true,
-//             message: "Employee added successfully",
-//             // data: result.recordset // If you want to send back the result set
-//           });
-//         }
-//       }
-//     );
-//   } catch (err) {
-//     console.error("Error executing query:", err.stack);
-//     res
-//       .status(500)
-//       .send({ error: "Internal Server Error", details: err.message });
-//   }
-// };
-const get_MasterRequests = async (req, res) => {};
+    const { PartNo, Process, MC } =  req.body;
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("PartNo", Type.NVarChar, PartNo)
+      .input("Process", Type.NVarChar, Process)
+      .input("MC", Type.NVarChar, MC)
+      .query("EXEC [trans].[tb_Master_Tooling_Query_Partx3] @PartNo, @Process, @MC");
 
-const get_MasterRequestById = async (req, res) => {};
+    if (result.recordset.length === 0) {
+      res.status(404).json({ error: "Part Number not found" });
+    } else {
+      res.json(result.recordsets);
+    }
+  } catch (error) {
+    console.error("Error executing query:", error.stack);
+    res.status(500).json({ error: " Server Error", details: error.message });
+  }
+};
 
 
-
-const update_MasterRequest = async (req, res) => {};
-
-const delete_MasterRequest = async (req, res) => {};
 
 module.exports = {
-  get_MasterRequests,
-  get_MasterRequestById,
   create_MasterRequest,
-  update_MasterRequest,
-  delete_MasterRequest,
+  get_onlyPartNo,
+  getProcesses,
+  getMachines,
+  getDetails,
 };
