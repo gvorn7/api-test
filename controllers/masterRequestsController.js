@@ -52,8 +52,7 @@ const create_MasterRequest = async (req, res) => {
   }
 };
 
-
-const get_onlyPartNo = async function (req, res) {
+const Post_PartNo = async function (req, res) {
   try {
     console.log("Request Body:", req.body);
 
@@ -74,12 +73,11 @@ const get_onlyPartNo = async function (req, res) {
   }
 };
 
-
-const getProcesses = async function (req, res) {
+const Post_Process = async function (req, res) {
   try {
-    console.log("Request Params:",  req.body);
+    console.log("Request Params:", req.body);
 
-    const { PartNo } =  req.body;
+    const { PartNo } = req.body;
 
     const pool = await poolPromise;
     const result = await pool
@@ -99,42 +97,17 @@ const getProcesses = async function (req, res) {
 };
 
 
-const getMachines = async function (req, res) {
-  try {
-    console.log("Request Params:",  req.body);
+const Post_MC = async function (req, res) {
 
-    const { PartNo, Process } =  req.body;
+  try {
+    const { PartNo ,Process} = req.body;
+
     const pool = await poolPromise;
     const result = await pool
       .request()
       .input("PartNo", Type.NVarChar, PartNo)
       .input("Process", Type.NVarChar, Process)
       .query("EXEC [trans].[tb_Master_Tooling_Query_Partx2] @PartNo, @Process");
-
-    if (result.recordset.length === 0) {
-      res.status(404).json({ error: "MC not found" });
-    } else {
-      res.json(result.recordsets);
-    }
-  } catch (error) {
-    console.error("Error executing query:", error.stack);
-    res.status(500).json({ error: " Server Error", details: error.message });
-  }
-};
-
-
-const getDetails = async function (req, res) {
-  try {
-    console.log("Request Params:",  req.body);
-
-    const { PartNo, Process, MC } =  req.body;
-    const pool = await poolPromise;
-    const result = await pool
-      .request()
-      .input("PartNo", Type.NVarChar, PartNo)
-      .input("Process", Type.NVarChar, Process)
-      .input("MC", Type.NVarChar, MC)
-      .query("EXEC [trans].[tb_Master_Tooling_Query_Partx3] @PartNo, @Process, @MC");
 
     if (result.recordset.length === 0) {
       res.status(404).json({ error: "Part Number not found" });
@@ -147,12 +120,36 @@ const getDetails = async function (req, res) {
   }
 };
 
+const Post_ToolDetial = async function (req, res) {
+  try {
+    console.log("Request Params:", req.body);
 
+    const { PartNo, Process, MC } = req.body;
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("PartNo", Type.NVarChar, PartNo)
+      .input("Process", Type.NVarChar, Process)
+      .input("MC", Type.NVarChar, MC)
+      .query(
+        "EXEC [trans].[tb_Master_Tooling_Query_Partx3] @PartNo, @Process, @MC"
+      );
+
+    if (result.recordset.length === 0) {
+      res.status(404).json({ error: "Part Number not found" });
+    } else {
+      res.json(result.recordsets);
+    }
+  } catch (error) {
+    console.error("Error executing query:", error.stack);
+    res.status(500).json({ error: " Server Error", details: error.message });
+  }
+};
 
 module.exports = {
   create_MasterRequest,
-  get_onlyPartNo,
-  getProcesses,
-  getMachines,
-  getDetails,
+  Post_PartNo,
+  Post_Process,
+  Post_MC,
+  Post_ToolDetial,
 };

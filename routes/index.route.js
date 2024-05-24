@@ -9,10 +9,10 @@ const toolController = require('../controllers/toolController');
 
 //Request
 router.post('/insert_req', masterRequestsController.create_MasterRequest);
-router.post('/get_onlyPartNo', masterRequestsController.get_onlyPartNo);
-router.post('/getProcesses', masterRequestsController.getProcesses);
-router.post('/getMachines/', masterRequestsController.getMachines);
-router.post('/getDetails/', masterRequestsController.getDetails);
+router.post('/Post_PartNo', masterRequestsController.Post_PartNo);
+router.post('/Post_Process', masterRequestsController.Post_Process);
+router.post('/Post_MC', masterRequestsController.Post_MC);
+router.post('/Post_ToolDetial', masterRequestsController.Post_ToolDetial);
 
 //----------------------------------------------------------------------------//
 router.post('/create', docRequestsController.create_DocRequest);
