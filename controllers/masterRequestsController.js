@@ -1,56 +1,64 @@
 const { connectDb, closeDb, poolPromise } = require("../config/db.config");
 var Type = require("mssql").TYPES;
 
-const create_MasterRequest = async (req, res) => {
+
+
+
+const  create_reqTool  = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
-
-    const {
-      division,
-      PartNo,
-      selectedProcess,
-      mcType,
-      mcNo,
-      revPart,
-      selectedCase,
-      dateOfReq,
-    } = req.body;
-
+    const { Emp_Code,Doc_No, Req_Case, Req_Date_Request, Part_No, Process, Tooling_Name, Tooling_Type, Tooling_Spec, Item_No, Division, MC, MC_No, Dwg_Rev, CT, Usage_Pcs } = req.body;
     const pool = await poolPromise;
+    const result = await pool.request();
 
-    const query = `
-      INSERT INTO YourTableName (Division, PartNo, Process, MCType, MCNo, RevPart, Case, DateOfReq)
-      VALUES (@division, @PartNo, @selectedProcess, @mcType, @mcNo, @revPart, @selectedCase, @dateOfReq)
-    `;
-
-    // Execute query
-    const result = await pool
-      .request()
-      .input("division", sql.NVarChar, division)
-      .input("PartNo", sql.NVarChar, PartNo)
-      .input("selectedProcess", sql.NVarChar, selectedProcess)
-      .input("mcType", sql.NVarChar, mcType)
-      .input("mcNo", sql.NVarChar, mcNo)
-      .input("revPart", sql.NVarChar, revPart)
-      .input("selectedCase", sql.NVarChar, selectedCase)
-      .input("dateOfReq", sql.Date, dateOfReq)
-      .query(query);
-
-    // Send success response
-    res.status(200).json({
-      success: true,
-      message: "Record inserted successfully",
-    });
+    result
+    .input('Emp_Code', Type.NVarChar, Emp_Code)
+    .input('Doc_No', Type.NVarChar, Doc_No)
+    .input('Req_Case', Type.NVarChar, Req_Case)
+    .input('Req_Date_Request', Type.NVarChar, Req_Date_Request)
+    .input('Part_No', Type.NVarChar, Part_No)
+    .input('Process', Type.NVarChar, Process)
+    .input('Tooling_Name', Type.NVarChar, Tooling_Name)
+    .input('Tooling_Type', Type.NVarChar, Tooling_Type)
+    .input('Tooling_Spec', Type.NVarChar, Tooling_Spec)
+    .input('Item_No', Type.NVarChar, Item_No)
+    .input('Division', Type.NVarChar, Division)
+    .input('MC', Type.NVarChar, MC)
+    .input('MC_No', Type.NVarChar, MC_No)
+    .input('Dwg_Rev', Type.NVarChar, Dwg_Rev)
+    .input('CT', Type.NVarChar, CT)
+    .input('Usage_Pcs', Type.NVarChar, Usage_Pcs);
+      
+    result.query(
+      'EXEC [trans].[tb_Request_Insert] @Emp_Code,@Doc_No,@Req_Case,@Req_Date_Request,@Part_No,@Process,@Tooling_Name,@Tooling_Type,@Tooling_Spec,@Item_No,@Division,@MC,MC_No,@Dwg_Rev,@CT,@Usage_Pcs',
+      function (err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json({
+            success: true,
+            message: "Employee added successfully",
+            result: result,
+          });
+        }
+      }
+    );
   } catch (err) {
-    // Handle errors
     console.error("Error executing query:", err.stack);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: err.message,
-    });
+    res
+      .status(500)
+      .send({ error: "Internal Server Error", details: err.message });
   }
 };
+
+
+
+
+
+
+
+
+
+
 
 const Post_PartNo = async function (req, res) {
   try {
@@ -100,7 +108,7 @@ const Post_Process = async function (req, res) {
 const Post_MC = async function (req, res) {
 
   try {
-    const { PartNo ,Process} = req.body;
+    const { PartNo, Process } = req.body;
 
     const pool = await poolPromise;
     const result = await pool
@@ -147,7 +155,7 @@ const Post_ToolDetial = async function (req, res) {
 };
 
 module.exports = {
-  create_MasterRequest,
+  create_reqTool,
   Post_PartNo,
   Post_Process,
   Post_MC,

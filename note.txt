@@ -1,25 +1,15 @@
-
-To Update the project Structure
-
-mkdir src/app/services
-mkdir src/app/pages
-mv src/app/auth.service.ts src/app/services/auth.service.ts
-mv src/app/login src/app/pages/login
-mv src/app/register src/app/pages/register
-
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-CREATE TABLE Users (
-    id INT PRIMARY KEY IDENTITY(1,1),
-    username NVARCHAR(50) NOT NULL UNIQUE,
-    password NVARCHAR(255) NOT NULL
-);
-GO
-
--- Insert Initial Data (replace hashed passwords with actual hashed values)
-INSERT INTO Users (username, password)
-VALUES 
-('testuser', '$2a$08$uyRt3euwQ0P4nEqdCgkO5e3OXZZ0l6dKZqcyw7OjOsoYtI5PqE/AW'),  -- hashed 'password123'
-('admin', '$2a$08$zNm5dKtXhUeCZoeoT6obGejvKu3t9sQu2bF0G5QsbyuENCM0YYUly');  -- hashed 'admin123'
-GO
-
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    .input('Doc_No',Type.NVarChar,Doc_No)
+    .input('Req_Case',Type.NVarChar,Req_Case)
+    .input('Req_Date_Request',Type.Date,Req_Date_Request)
+    .input('Part_No',Type.NVarChar,Part_No)
+    .input('Process',Type.NVarChar,Process)
+    .input('Tooling_Name',Type.NVarChar,Tooling_Name)
+    .input('Tooling_Type',Type.NVarChar,Tooling_Type)
+    .input('Tooling_Spec',Type.NVarChar,Tooling_Spec)
+    .input('Item_No',Type.NVarChar,Item_No)
+    .input('Division',Type.NVarChar,Division)
+    .input('MC',Type.NVarChar,MC)
+    .input('MC_No',Type.NVarChar,MC_No)
+    .input('Dwg_Rev',Type.NVarChar,Dwg_Rev)
+    .input('CT',Type.NVarChar,CT)
+    .input('Usage_Pcs',Type.NVarChar,Usage_Pcs)
