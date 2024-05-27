@@ -8,7 +8,7 @@ const authController = require('../controllers/auth.controller');
 const toolController = require('../controllers/toolController');
 
 //Request
-router.post('/requestTool', masterRequestsController.create_reqTool);
+router.post('/requestTool', masterRequestsController.insertSelectedRows);
 router.post('/Post_PartNo', masterRequestsController.Post_PartNo);
 router.post('/Post_Process', masterRequestsController.Post_Process);
 router.post('/Post_MC', masterRequestsController.Post_MC);

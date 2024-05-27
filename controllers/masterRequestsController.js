@@ -2,63 +2,140 @@ const { connectDb, closeDb, poolPromise } = require("../config/db.config");
 var Type = require("mssql").TYPES;
 
 
+// Route to insert selected rows
+const insertSelectedRows =  async (req, res) => {
 
 
-const  create_reqTool  = async (req, res) => {
   try {
-    const { Emp_Code,Doc_No, Req_Case, Req_Date_Request, Part_No, Process, Tooling_Name, Tooling_Type, Tooling_Spec, Item_No, Division, MC, MC_No, Dwg_Rev, CT, Usage_Pcs } = req.body;
+    const { PartNo, ItemNo, MC, Process, Spec, Usage_pcs,CT, MCNo, Qty, Result1, Result2, Result3, Result4, Result5, Result6, Division, revPart, Case, dateOfReq } = req.body;
     const pool = await poolPromise;
     const result = await pool.request();
-
-    result
-    .input('Emp_Code', Type.NVarChar, Emp_Code)
-    .input('Doc_No', Type.NVarChar, Doc_No)
-    .input('Req_Case', Type.NVarChar, Req_Case)
-    .input('Req_Date_Request', Type.NVarChar, Req_Date_Request)
-    .input('Part_No', Type.NVarChar, Part_No)
-    .input('Process', Type.NVarChar, Process)
-    .input('Tooling_Name', Type.NVarChar, Tooling_Name)
-    .input('Tooling_Type', Type.NVarChar, Tooling_Type)
-    .input('Tooling_Spec', Type.NVarChar, Tooling_Spec)
-    .input('Item_No', Type.NVarChar, Item_No)
-    .input('Division', Type.NVarChar, Division)
-    .input('MC', Type.NVarChar, MC)
-    .input('MC_No', Type.NVarChar, MC_No)
-    .input('Dwg_Rev', Type.NVarChar, Dwg_Rev)
-    .input('CT', Type.NVarChar, CT)
-    .input('Usage_Pcs', Type.NVarChar, Usage_Pcs);
+      result
+      .input('PartNo', Type.NVarChar, PartNo)
+      .input('ItemNo', Type.NVarChar, ItemNo)
+      .input('MC', Type.NVarChar, MC)
+      .input('Process', Type.NVarChar, Process)
+      .input('Spec', Type.NVarChar, Spec)
+      .input('Usage_pcs', Type.Int, Usage_pcs)
+      .input('CT',Type.NVarChar,CT)
+      .input('DwgRev', Type.NVarChar,DwgRev)
+      .input('MCNo', Type.NVarChar, MCNo)
+      .input('Qty', Type.Int, Qty)
+      .input('Result1', Type.Int, Result1)
+      .input('Result2', Type.Int, Result2)
+      .input('Result3', Type.Int, Result3)
+      .input('Result4', Type.Int, Result4)
+      .input('Result5', Type.Int, Result5)
+      .input('Result6', Type.Int, Result6)
+      .input('Division', Type.NVarChar, Division)
+      .input('revPart', Type.NVarChar, revPart)
+      .input('[Case]', Type.NVarChar, Case)
+      .input('dateOfReq', Type.Date, dateOfReq);
       
-    result.query(
-      'EXEC [trans].[tb_Request_Insert] @Emp_Code,@Doc_No,@Req_Case,@Req_Date_Request,@Part_No,@Process,@Tooling_Name,@Tooling_Type,@Tooling_Spec,@Item_No,@Division,@MC,MC_No,@Dwg_Rev,@CT,@Usage_Pcs',
-      function (err, result) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.json({
-            success: true,
-            message: "Employee added successfully",
-            result: result,
-          });
-        }
-      }
-    );
+      result.query(`EXEC [trans].[tb_Request_Insert] @PartNo, @ItemNo, @MC, @Process, @Spec, @Usage_pcs, @MCNo, @Qty, @Result1, @Result2, @Result3, @Result4, @Result5, @Result6, @Division, @revPart, @Case, @dateOfReq
+      `);
+    
+
+    await transaction.commit();
+    res.status(200).send('Rows inserted successfully');
   } catch (err) {
-    console.error("Error executing query:", err.stack);
-    res
-      .status(500)
-      .send({ error: "Internal Server Error", details: err.message });
+    console.error('Error inserting rows:', err);
+    res.status(500).send('Error inserting rows');
   }
 };
+// const insertSelectedRows = async (req, res) => {
+//   try {
+//     const {
+//       Part_No,
+//       Item_No,
+//       MC,
+//       Process,
+//       Spec,
+//       Usage_Pcs,
+//       MC_No,
+//       Qty,
+//       Result1,
+//       Result2,
+//       Result3,
+//       Result4,
+//       Result5,
+//       Result6,
+//       Division,
+//       Dwg_Rev,
+//       Req_Case,
+//       Req_Date_Request,
+//       CT,
+//     } = req.body;
+
+//     const pool = await poolPromise;
+//     const result = await pool
+//       .request()
+
+//       .input("Part_No", Type.NVarChar, Part_No)
+//       .input("Item_No", Type.NVarChar, Item_No)
+//       .input("MC", Type.NVarChar, MC)
+//       .input("Process", Type.NVarChar, Process)
+//       .input("Spec", Type.NVarChar, Spec)
+//       .input("Usage_Pcs", Type.NVarChar, Usage_Pcs)
+//       .input("MCNo", Type.NVarChar, MCNo)
+//       .input("Qty", Type.NVarChar, Qty)
+//       .input("Result1", Type.NVarChar, Result1)
+//       .input("Result2", Type.NVarChar, Result2)
+//       .input("Result3", Type.NVarChar, Result3)
+//       .input("Result4", Type.NVarChar, Result4)
+//       .input("Result5", Type.NVarChar, Result5)
+//       .input("Result6", Type.NVarChar, Result6)
+//       .input("Division", Type.NVarChar, Division)
+//       .input("DwgRev", Type.NVarChar, DwgRev)
+//       .input("CT", Type.NVarChar, CT)
+//       .input("ReqCase", Type.NVarChar, ReqCase)
+//       .input("Req_Date_Request", Type.NVarChar, Req_Date_Request);
+
+//     result.query(
+//       "EXEC [trans].[tb_Request_Insert] @Part_No,@Item_No,@MC,@Process,@Spec,@Usage_Pcs,@MC_No,@Qty,@Result1,@Result2,@Result3,@Result4,@Result5,@Result6,@Division,@Dwg_Rev",
+//       function (err, result) {
+//         if (err) {
+//           console.log(err);
+//           res.status(500).json({ success: false, error: err.message });
+//         } else {
+//           res.json({
+//             success: true,
+//             message: "Employee added successfully",
+//             result: result,
+//           });
+//         }
+//       }
+//     );
+//   } catch (err) {
+//     console.error("Error executing query:", err.stack);
+//     res
+//       .status(500)
+//       .send({ error: "Internal Server Error", details: err.message });
+//   }
+// };
 
 
 
 
-
-
-
-
-
-
+// .input('Part_No', Type.NVarChar, Part_No)
+// .input('Item_No', Type.NVarChar, Item_No)
+// .input('MC', Type.NVarChar, MC)
+// .input('Process', Type.NVarChar, Process)
+// .input('Spec', Type.NVarChar, Spec)
+// .input('Usage_Pcs', Type.NVarChar, Usage_Pcs)
+// .input('MC_No', Type.NVarChar, MC_No)
+// .input('Qty', Type.NVarChar, Qty)
+// .input('Result1', Type.NVarChar, Result1)
+// .input('Result2', Type.NVarChar, Result2)
+// .input('Result3', Type.NVarChar, Result3)
+// .input('Result4', Type.NVarChar, Result4)
+// .input('Result5', Type.NVarChar, Result5)
+// .input('Result6', Type.NVarChar, Result6)
+// .input('Division', Type.NVarChar, Division)
+// .input('Dwg_Rev', Type.NVarChar, Dwg_Rev)
+// .input('Req_Case', Type.NVarChar, Req_Case)
+// .input('Req_Date_Request', Type.NVarChar, Req_Date_Request)
+// .input('CT', Type.NVarChar, CT)
 
 const Post_PartNo = async function (req, res) {
   try {
@@ -104,9 +181,7 @@ const Post_Process = async function (req, res) {
   }
 };
 
-
 const Post_MC = async function (req, res) {
-
   try {
     const { PartNo, Process } = req.body;
 
@@ -155,7 +230,7 @@ const Post_ToolDetial = async function (req, res) {
 };
 
 module.exports = {
-  create_reqTool,
+  insertSelectedRows,
   Post_PartNo,
   Post_Process,
   Post_MC,
