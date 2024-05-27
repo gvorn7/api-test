@@ -11,15 +11,20 @@ const insertSelectedRows =  async (req, res) => {
     const pool = await poolPromise;
     const result = await pool.request();
       result
+      .input('Emp_Code', Type.NVarChar, Emp_Code)
+      .input('Doc_No', Type.NVarChar, Doc_No)
       .input('PartNo', Type.NVarChar, PartNo)
+.input('Process', Type.NVarChar, Process)
+.input('Tooling_Name', Type.NVarChar, Tooling_Name)
       .input('ItemNo', Type.NVarChar, ItemNo)
       .input('MC', Type.NVarChar, MC)
-      .input('Process', Type.NVarChar, Process)
+      
       .input('Spec', Type.NVarChar, Spec)
       .input('Usage_pcs', Type.Int, Usage_pcs)
       .input('CT',Type.NVarChar,CT)
       .input('DwgRev', Type.NVarChar,DwgRev)
       .input('MCNo', Type.NVarChar, MCNo)
+
       .input('Qty', Type.Int, Qty)
       .input('Result1', Type.Int, Result1)
       .input('Result2', Type.Int, Result2)
@@ -27,9 +32,10 @@ const insertSelectedRows =  async (req, res) => {
       .input('Result4', Type.Int, Result4)
       .input('Result5', Type.Int, Result5)
       .input('Result6', Type.Int, Result6)
+
       .input('Division', Type.NVarChar, Division)
       .input('revPart', Type.NVarChar, revPart)
-      .input('[Case]', Type.NVarChar, Case)
+      .input('_Case', Type.NVarChar, Case)
       .input('dateOfReq', Type.Date, dateOfReq);
       
       result.query(`EXEC [trans].[tb_Request_Insert] @PartNo, @ItemNo, @MC, @Process, @Spec, @Usage_pcs, @MCNo, @Qty, @Result1, @Result2, @Result3, @Result4, @Result5, @Result6, @Division, @revPart, @Case, @dateOfReq
