@@ -10,7 +10,7 @@ const login = async (req, res) => {
         const pool = await poolPromise;
         const result = await pool.request()
             .input('Emp_Code', Type.NVarChar, Emp_Code)
-            .query('EXEC [trans].[tb_Emp_QueryByCode] @Emp_Code');
+            .query('EXEC [trans].[stored_tb_Employee_Query] @Emp_Code');
 
 
 
@@ -41,10 +41,11 @@ const register = async (req, res) => {
             .input("a", Type.NVarChar, Emp_Code)
             .input("b", Type.NVarChar, req.body.Emp_Name)
             .input("c", Type.NVarChar, req.body.Emp_Surname)
-            .input("d", Type.NVarChar, req.body.Emp_Position)
+            .input("d", Type.NVarChar, req.body.Emp_Pwd)
+            .input("e", Type.NVarChar, req.body.Emp_Position)
 
         result.query(
-            "EXEC [trans].[tb_Emp_Insert]  @a, @b,@c,@d",
+            "EXEC [trans].[stored_tb_Employee_Insert]  @a, @b,@c,@d,@e",
             function (err, result) {
                 if (err) {
                     console.log(err);

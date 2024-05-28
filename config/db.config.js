@@ -2,10 +2,10 @@
 const sql = require("mssql");
 
 const dbConfig = {
-    user: "admin1",
-  password: "adminadmin1",
-  server: "PBGM7A",
-  database: "db_longdoo",
+    user: "Cost_Team",
+  password: "Cost@User1",
+  server: "pbp155",
+  database: "db_Indirect_Expense",
   options: {
     trustServerCertificate: true,
     trustedConnection: true,
@@ -28,6 +28,36 @@ module.exports = {
   sql, 
   poolPromise
 };
+
+// const sql = require("mssql");
+
+// const dbConfig = {
+//     user: "admin1",
+//   password: "adminadmin1",
+//   server: "PBGM7A",
+//   database: "db_longdoo",
+//   options: {
+//     trustServerCertificate: true,
+//     trustedConnection: true,
+//     encrypt: false,
+//   },
+// };
+
+// const poolPromise = new sql.ConnectionPool(dbConfig)
+//   .connect()
+//   .then(pool => {
+//     console.log('Connected to MSSQL');
+//     return pool;
+//   })
+//   .catch(err => {
+//     console.error('Database Connection Failed!', err.stack);
+//     throw err;
+//   });
+
+// module.exports = {
+//   sql, 
+//   poolPromise
+// };
 
 
 
