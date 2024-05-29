@@ -13,6 +13,7 @@ router.post('/Post_PartNo', masterRequestsController. Post_OPIST_PartNo);
 router.post('/Post_Process', masterRequestsController. Post_OPIST_Process);
 router.post('/Post_MC', masterRequestsController.Post_MC);
 router.post('/Post_ToolDetial', masterRequestsController.Post_ToolDetial);
+router.get('/Post_Detail', masterRequestsController.Post_Request_Detail)
 
 //----------------------------------------------------------------------------//
 router.post('/create', docRequestsController.create_DocRequest);

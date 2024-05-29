@@ -164,12 +164,37 @@ const Post_ToolDetial = async function (req, res) {
   }
 };
 
+
+
+const Post_Request_Detail = async function (req, res) {
+  try {
+    console.log("Request Body:", req.body);
+
+    const pool = await poolPromise;
+    console.log("Database pool created:", pool);
+
+    const result = await pool
+      .request()
+      .query("EXEC [trans].[stored_tb_Master_Tooling_Query]");
+
+    // console.log("Query Result:", result);
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error executing query:", error.stack);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+
 module.exports = {
   insertSelectedRows,
   Post_OPIST_PartNo,
   Post_OPIST_Process,
   Post_MC,
   Post_ToolDetial,
+  Post_Request_Detail
 };
 
 
